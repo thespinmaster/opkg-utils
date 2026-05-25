@@ -60,8 +60,8 @@ You probably want to remove them: " >&2
 	    fi
 	fi
 
-	large_uid_files=`find . -uid +99 || true`
-
+	large_uid_files=`find . -exec ls -ld {} \; 2>/dev/null | awk '$3 > 99 {print $NF}' || true`
+ 
 	if [ "$ogargs" = "" ]  && [ -n "$large_uid_files" ]; then
 		echo "*** Warning: The following files have a UID greater than 99.
 You probably want to chown these to a system user: " >&2
@@ -234,6 +234,8 @@ mkdir $tmp_dir
 
 echo $CONTROL > $tmp_dir/tarX
 ( cd $pkg_dir && tar $ogargs -X $tmp_dir/tarX -czf $tmp_dir/data.tar.gz . )
+#( cd $pkg_dir && find . -mindepth 1 -print | tar $ogargs -X $tmp_dir/tarX -T - -czf $tmp_dir/data.tar.gz )
+
 ( cd $pkg_dir/$CONTROL && tar $ogargs -czf $tmp_dir/control.tar.gz . )
 rm $tmp_dir/tarX
 
