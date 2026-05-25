@@ -209,14 +209,18 @@ class Package:
         line = control.readline()
         while 1:
             if not line: break
+            if isinstance(line, bytes):
+                line = line.decode('utf-8')
             line = line.rstrip()
-            lineparts = re.match(r'([\w-]*?):\s*(.*)', str(line))
+            lineparts = re.match(r'([\w-]*?):\s*(.*)', line)
             if lineparts:
                 name = lineparts.group(1).lower()
                 value = lineparts.group(2)
                 while 1:
                     line = control.readline()
                     if not line: break
+                    if isinstance(line, bytes):
+                        line = line.decode('utf-8')
                     if line[0] != ' ': break
                     value = value + '\n' + line
                 if name == 'size':
